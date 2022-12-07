@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import { useState, useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -12,37 +12,75 @@ import { Loader } from './Loader/Loader';
 import { Button } from './Button/Button';
 import { Modal } from './Modal/Modal';
 
-export class App extends Component {
-  state = {
-    images: [],
-    clickedImageUrl: null,
-    page: 1,
-    query: null,
-    isLoading: false,
-    totPages: null,
+export function App() {
+  // state = {
+  //   images: [],
+  //   clickedImageUrl: null,
+  //   page: 1,
+  //   query: null,
+  //   isLoading: false,
+  //   totPages: null,
+  // };
+  const [images, setImages] = useState([]);
+  const [clickedImageUrl, setClickedImageUrl] = useState(null);
+  const [page, setPage] = useState(1);
+  const [query, setQuery] = useState(null);
+  const [isLoading, setIsloading] = useState(false);
+  const [totPages, setTotPages] = useState(null);
+
+  // componentDidUpdate (_, prev) {
+  //   const { page, query, totPages, images } = this.state;
+
+  //   if (prev.page !== page || prev.query !== query) {
+  //     getImages();
+  //   }
+  //   if (page >= totPages && images !== prev.images && page !== 1) {
+  //     // toast.error("We're sorry, but you've reached the end of search results.");
+  //     lastPageNotify();
+  //   }
+
+  //   scrollHandler();
+  // };
+
+  useEffect(() => {
+    // const array = api.fetchImages(query, page);
+    // console.log(array);
+    // console.log(array.totalHits);
+    getImages();
+  }, [page, query]);
+
+  const getCkickedImgUrl = data => {
+    setClickedImageUrl(data);
   };
 
-  componentDidUpdate(_, prev) {
-    const { page, query, totPages, images } = this.state;
+  // getImages = async () => {
+  //   const { page, query } = this.state;
+  //   this.setState({ isLoading: true });
+  //   try {
+  //     const array = await api.fetchImages(query, page);
 
-    if (prev.page !== page || prev.query !== query) {
-      this.getImages();
-    }
-    if (page >= totPages && images !== prev.images && page !== 1) {
-      // toast.error("We're sorry, but you've reached the end of search results.");
-      this.lastPageNotify();
-    }
+  //     if (!array.hits.length) {
+  //       toast.warning(
+  //         'Sorry, there are no images matching your search query. Please try again.'
+  //       );
+  //     }
+  //     this.setState({ totPages: Math.ceil(array.totalHits / 12) });
 
-    this.scrollHandler();
-  }
+  //     console.log(array);
+  //     console.log(array.totalHits);
+  //     this.setState(prev => ({
+  //       images: [...prev.images, ...imagesMapper(array.hits)],
+  //     }));
+  //     // this.setState({ isLoading: false });
+  //   } catch (error) {
+  //     console.log(error);
+  //   } finally {
+  //     this.setState({ isLoading: false });
+  //   }
+  // };
 
-  getCkickedImgUrl = data => {
-    this.setState({ clickedImageUrl: data });
-  };
-
-  getImages = async () => {
-    const { page, query } = this.state;
-    this.setState({ isLoading: true });
+  const getImages = async () => {
+    setIsloading(true);
     try {
       const array = await api.fetchImages(query, page);
 
@@ -51,45 +89,67 @@ export class App extends Component {
           'Sorry, there are no images matching your search query. Please try again.'
         );
       }
-      this.setState({ totPages: Math.ceil(array.totalHits / 12) });
+      setTotPages(Math.ceil(array.totalHits / 12));
 
       console.log(array);
       console.log(array.totalHits);
-      this.setState(prev => ({
-        images: [...prev.images, ...imagesMapper(array.hits)],
-      }));
-      // this.setState({ isLoading: false });
+
+      setImages(prevImages => [...prevImages, ...imagesMapper(array.hits)]);
     } catch (error) {
       console.log(error);
     } finally {
-      this.setState({ isLoading: false });
+      setIsloading(false);
     }
   };
 
-  nextPage = () => {
-    this.setState(({ page }) => ({
-      page: page + 1,
-    }));
+  // nextPage = () => {
+  //   this.setState(({ page }) => ({
+  //     page: page + 1,
+  //   }));
+  // };
+  const nextPage = () => {
+    setPage(prevPage => prevPage + 1);
   };
 
-  closeModal = () => {
-    this.setState({ clickedImageUrl: null });
+  // closeModal = () => {
+  //   this.setState({ clickedImageUrl: null });
+  // };
+  const closeModal = () => {
+    setClickedImageUrl(null);
   };
 
-  onFormSubmit = query => {
-    if (query !== this.state.query) {
-      this.setState({ page: 1, images: [], query });
-    }
+  // onFormSubmit = query => {
+  //   if (query !== this.state.query) {
+  //     this.setState({ page: 1, images: [], query });
+  //   }
+  // };
+  const onFormSubmit = query => {
+    setQuery(query);
+    setPage(1);
+    setImages([]);
   };
 
-  scrollHandler = () => {
+  const scrollHandler = () => {
     window.scrollTo({
       top: document.documentElement.scrollHeight,
       behavior: 'smooth',
     });
   };
 
-  lastPageNotify() {
+  // lastPageNotify() {
+  //   toast.error("We're sorry, but you've reached the end of search results.", {
+  //     position: 'top-right',
+  //     autoClose: 3000,
+  //     hideProgressBar: false,
+  //     closeOnClick: true,
+  //     pauseOnHover: true,
+  //     draggable: true,
+  //     progress: undefined,
+  //     theme: 'colored',
+  //   });
+  // }
+
+  const lastPageNotify = () => {
     toast.error("We're sorry, but you've reached the end of search results.", {
       position: 'top-right',
       autoClose: 3000,
@@ -100,33 +160,26 @@ export class App extends Component {
       progress: undefined,
       theme: 'colored',
     });
-  }
+  };
+  // const { images, isLoading, page, totPages, clickedImageUrl } = this.state;
 
-  render() {
-    const { images, isLoading, page, totPages, clickedImageUrl } = this.state;
+  return (
+    <APP>
+      <Searchbar onSubmit={onFormSubmit} loading={isLoading}></Searchbar>
+      {images && <ImagesGallery options={images} onClick={getCkickedImgUrl} />}
 
-    return (
-      <APP>
-        <Searchbar onSubmit={this.onFormSubmit} loading={isLoading}></Searchbar>
-        {images && (
-          <ImagesGallery options={images} onClick={this.getCkickedImgUrl} />
-        )}
+      {isLoading ? (
+        <Loader />
+      ) : (
+        images &&
+        page < totPages && <Button onClick={nextPage} loading={isLoading} />
+      )}
+      {clickedImageUrl && (
+        <Modal closeModal={closeModal} url={clickedImageUrl} />
+      )}
 
-        {isLoading ? (
-          <Loader />
-        ) : (
-          images &&
-          page < totPages && (
-            <Button onClick={this.nextPage} loading={isLoading} />
-          )
-        )}
-        {clickedImageUrl && (
-          <Modal closeModal={this.closeModal} url={clickedImageUrl} />
-        )}
-
-        <GlobalStyle />
-        <ToastContainer />
-      </APP>
-    );
-  }
+      <GlobalStyle />
+      <ToastContainer />
+    </APP>
+  );
 }
