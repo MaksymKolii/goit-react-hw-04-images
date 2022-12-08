@@ -50,6 +50,12 @@ export function App() {
     // scrollHandler();
   }, [page, query]);
 
+  useEffect(() => {
+    if (page >= totPages && page !== 1) {
+      lastPageNotify();
+    }
+  }, [page, totPages]);
+
   const getCkickedImgUrl = data => {
     setClickedImageUrl(data);
   };
