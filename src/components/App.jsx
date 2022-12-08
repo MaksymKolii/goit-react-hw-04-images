@@ -47,6 +47,7 @@ export function App() {
     // console.log(array);
     // console.log(array.totalHits);
     getImages();
+    // scrollHandler();
   }, [page, query]);
 
   const getCkickedImgUrl = data => {
@@ -79,7 +80,7 @@ export function App() {
   //   }
   // };
 
-  const getImages = async () => {
+  async function getImages() {
     setIsloading(true);
     try {
       const array = await api.fetchImages(query, page);
@@ -93,6 +94,7 @@ export function App() {
 
       console.log(array);
       console.log(array.totalHits);
+      scrollHandler();
 
       setImages(prevImages => [...prevImages, ...imagesMapper(array.hits)]);
     } catch (error) {
@@ -100,7 +102,7 @@ export function App() {
     } finally {
       setIsloading(false);
     }
-  };
+  }
 
   // nextPage = () => {
   //   this.setState(({ page }) => ({
