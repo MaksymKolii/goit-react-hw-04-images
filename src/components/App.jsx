@@ -43,11 +43,34 @@ export function App() {
   // };
 
   useEffect(() => {
-    // const array = api.fetchImages(query, page);
-    // console.log(array);
-    // console.log(array.totalHits);
+    if (query === null) {
+      return;
+    }
+    async function getImages() {
+      setIsloading(true);
+      try {
+        const array = await api.fetchImages(query, page);
+
+        if (!array.hits.length) {
+          toast.warning(
+            'Sorry, there are no images matching your search query. Please try again.'
+          );
+        }
+        setTotPages(Math.ceil(array.totalHits / 12));
+
+        console.log(array);
+        console.log(array.totalHits);
+        // scrollHandler();
+
+        setImages(prevImages => [...prevImages, ...imagesMapper(array.hits)]);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setIsloading(false);
+      }
+    }
     getImages();
-    // scrollHandler();
+    scrollHandler();
   }, [page, query]);
 
   useEffect(() => {
@@ -55,6 +78,10 @@ export function App() {
       lastPageNotify();
     }
   }, [page, totPages]);
+
+  // useEffect(() => {
+  //   scrollHandler();
+  // }, [page]);
 
   const getCkickedImgUrl = data => {
     setClickedImageUrl(data);
@@ -86,29 +113,29 @@ export function App() {
   //   }
   // };
 
-  async function getImages() {
-    setIsloading(true);
-    try {
-      const array = await api.fetchImages(query, page);
+  // async function getImages() {
+  //   setIsloading(true);
+  //   try {
+  //     const array = await api.fetchImages(query, page);
 
-      if (!array.hits.length) {
-        toast.warning(
-          'Sorry, there are no images matching your search query. Please try again.'
-        );
-      }
-      setTotPages(Math.ceil(array.totalHits / 12));
+  //     if (!array.hits.length) {
+  //       toast.warning(
+  //         'Sorry, there are no images matching your search query. Please try again.'
+  //       );
+  //     }
+  //     setTotPages(Math.ceil(array.totalHits / 12));
 
-      console.log(array);
-      console.log(array.totalHits);
-      scrollHandler();
+  //     console.log(array);
+  //     console.log(array.totalHits);
+  //     scrollHandler();
 
-      setImages(prevImages => [...prevImages, ...imagesMapper(array.hits)]);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsloading(false);
-    }
-  }
+  //     setImages(prevImages => [...prevImages, ...imagesMapper(array.hits)]);
+  //   } catch (error) {
+  //     console.log(error);
+  //   } finally {
+  //     setIsloading(false);
+  //   }
+  // }
 
   // nextPage = () => {
   //   this.setState(({ page }) => ({
