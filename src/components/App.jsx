@@ -70,10 +70,12 @@ export function App() {
     setClickedImageUrl(null);
   };
 
-  const onFormSubmit = query => {
-    setQuery(query);
-    setPage(1);
-    setImages([]);
+  const onFormSubmit = que => {
+    if (que !== query) {
+      setQuery(que);
+      setPage(1);
+      setImages([]);
+    }
   };
 
   const scrollHandler = () => {
