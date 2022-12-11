@@ -21,7 +21,7 @@ export function App() {
   const [showLoadMore, setShowLoadMore] = useState(false);
 
   useEffect(() => {
-    if (query === null) {
+    if (!query) {
       return;
     }
     async function getImages() {
@@ -102,7 +102,6 @@ export function App() {
       {isLoading ? (
         <Loader />
       ) : (
-        images &&
         showLoadMore && <Button onClick={nextPage} loading={isLoading} />
       )}
 
