@@ -18,7 +18,7 @@ export function App() {
   const [page, setPage] = useState(1);
   const [query, setQuery] = useState(null);
   const [isLoading, setIsloading] = useState(false);
-  const [totPages, setTotPages] = useState(null);
+  const [showLoadMore, setShowLoadMore] = useState(false);
 
   useEffect(() => {
     if (query === null) {
@@ -34,11 +34,13 @@ export function App() {
             'Sorry, there are no images matching your search query. Please try again.'
           );
         }
-        setTotPages(Math.ceil(array.totalHits / 12));
+        if (page === Math.ceil(array.totalHits / 12)) {
+          lastPageNotify();
+        }
+        setShowLoadMore(page < Math.ceil(array.totalHits / 12));
 
         console.log(array);
         console.log(array.totalHits);
-        // scrollHandler();
 
         setImages(prevImages => [...prevImages, ...imagesMapper(array.hits)]);
       } catch (error) {
@@ -48,19 +50,9 @@ export function App() {
       }
     }
     getImages();
+
     scrollHandler();
   }, [page, query]);
-
-  useEffect(() => {
-    if (page >= totPages && page !== 1) {
-      lastPageNotify();
-    }
-  }, [page, totPages]);
-
-  //* Пробую сократить до вызова в онКлик setClickedImageUrl
-  // const getCkickedImgUrl = data => {
-  //   setClickedImageUrl(data);
-  // };
 
   const nextPage = () => {
     setPage(prevPage => prevPage + 1);
@@ -98,7 +90,6 @@ export function App() {
       theme: 'colored',
     });
   };
-  // const { images, isLoading, page, totPages, clickedImageUrl } = this.state;
 
   return (
     <APP>
@@ -106,17 +97,16 @@ export function App() {
       {images && (
         <ImagesGallery options={images} onClick={setClickedImageUrl} />
       )}
-
       {isLoading ? (
         <Loader />
       ) : (
         images &&
-        page < totPages && <Button onClick={nextPage} loading={isLoading} />
+        showLoadMore && <Button onClick={nextPage} loading={isLoading} />
       )}
+
       {clickedImageUrl && (
         <Modal closeModal={closeModal} url={clickedImageUrl} />
       )}
-
       <GlobalStyle />
       <ToastContainer />
     </APP>
