@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useLayoutEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -50,9 +50,11 @@ export function App() {
       }
     }
     getImages();
-
-    scrollHandler();
   }, [page, query]);
+
+  useLayoutEffect(() => {
+    scrollHandler();
+  });
 
   const nextPage = () => {
     setPage(prevPage => prevPage + 1);
