@@ -1,25 +1,23 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { ImageGalleryItem } from 'components/ImageGalleryItem/ImageGalleryItem';
 import { Gallery } from './ImageGallery.styled';
 
-export class ImagesGallery extends Component {
-  render() {
-    return (
-      <Gallery>
-        {this.props.options.map(({ id, smallImg, bigImg }) => {
-          return (
-            <ImageGalleryItem
-              key={id}
-              smallImg={smallImg}
-              bigImg={bigImg}
-              onClick={this.props.onClick}
-            />
-          );
-        })}
-      </Gallery>
-    );
-  }
+export function ImagesGallery({ options, onClick }) {
+  return (
+    <Gallery>
+      {options.map(({ id, smallImg, bigImg }) => {
+        return (
+          <ImageGalleryItem
+            key={id}
+            smallImg={smallImg}
+            bigImg={bigImg}
+            onClick={onClick}
+          />
+        );
+      })}
+    </Gallery>
+  );
 }
 // ImagesGallery.propTypes = {
 //   id: PropTypes.number,
